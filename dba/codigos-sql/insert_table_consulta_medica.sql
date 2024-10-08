@@ -76,3 +76,29 @@ INSERT INTO consulta (tipo_consulta, status, id_paciente, id_medico) VALUES
 ('Consulta de Ortopedia', 'Agendada', 7, 7),
 ('Consulta de Fisioterapia', 'Agendada', 8, 6),
 ('Consulta de Ortopedia', 'Agendada', 9, 7);
+
+-- consultas específicas
+
+SELECT nome, cpf FROM pessoa;
+
+SELECT * FROM pessoa WHERE nome = 'João Paulo';
+
+SELECT * FROM pessoa WHERE nome LIKE '%Yan%';
+
+SELECT 
+pp.nome AS nome_paciente,
+pp.cpf AS cpf_paciente,
+pm.nome AS nome_medico,
+pm.cpf AS cpf_medico,
+c.tipo_consulta,
+c.data_consulta,
+c.status,
+p.num_sus,
+p.plano_saude,
+m.crm,
+m.especialidade
+ FROM consulta c # id_paciente id_medico
+ INNER JOIN paciente p ON c.id_paciente = p.id_paciente # id_pessoa
+ INNER JOIN pessoa pp ON pp.id_pessoa = p.id_pessoa
+ INNER JOIN medico m ON m.id_medico = c.id_medico #id_pessoa
+ INNER JOIN pessoa pm ON pm.id_pessoa = m.id_pessoa
