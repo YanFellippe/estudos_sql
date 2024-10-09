@@ -62,6 +62,7 @@ valor DECIMAL(10,2) NOT NULL,
 data_inicio DATE NOT NULL,
 previsao DATE,
 data_fim DATE,
+status CHAR(1) NOT NULL,
 id_empreiteira INT NOT NULL,
 id_projeto INT NOT NULL,
 id_colaborador INT NOT NULL,
@@ -116,7 +117,7 @@ INSERT INTO projeto(valor, tipo_projeto, nome_projeto, data_inicio, previsao, da
 (325997.22, 'Construção da Base', 'Shopping Central', '2024-10-10', '2028-12-09', NULL, 'A', 5);
 
 SELECT * FROM obra;
-INSERT INTO obra(valor, data_inicio, previsao, data_fim, id_empreiteira, id_projeto, id_colaborador) VALUES
-(1200000.00, '2024-10-11', '2028-12-09', NULL, 1, 1, 2),
-(2500000.00, '2024-10-15', '2028-12-09', NULL, 2, 2, 4),
-(3300000.00, '2024-11-01', '2028-12-09', NULL, 3, 3, 6);
+INSERT INTO obra(valor, data_inicio, previsao, data_fim, status, id_empreiteira, id_projeto, id_colaborador) VALUES
+(1200000.00, '2024-10-11', '2028-12-09', NULL, 'A', 1, 1, 2),
+(2500000.00, '2024-10-15', '2028-12-09', NULL, 'A', 2, 2, 4),
+(3300000.00, '2024-11-01', '2028-12-09', NULL, 'A', 3, 3, 6);
