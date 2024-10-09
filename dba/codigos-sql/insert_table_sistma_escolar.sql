@@ -32,3 +32,10 @@ SELECT * FROM turma;
 INSERT INTO turma(num_sala, capacidade, situacao, id_aluno, id_professor, id_curso) VALUES
 (111, 50, 'A', 1, 1, 2),
 (112, 50, 'A', 2, 2, 1);
+
+-- pesquisa especificada
+
+SELECT 
+*
+FROM turma t #id_aluno id_curso_id_professor
+INNER JOIN pessoa p ON p.id_pessoa = t.id_aluno
