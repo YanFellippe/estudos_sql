@@ -121,3 +121,16 @@ INSERT INTO obra(valor, data_inicio, previsao, data_fim, status, id_empreiteira,
 (1200000.00, '2024-10-11', '2028-12-09', NULL, 'A', 1, 1, 2),
 (2500000.00, '2024-10-15', '2028-12-09', NULL, 'A', 2, 2, 4),
 (3300000.00, '2024-11-01', '2028-12-09', NULL, 'A', 3, 3, 6);
+
+-- seção de select com inner join
+
+SELECT 
+p.nome,
+o.valor,
+o.data_inicio,
+o.previsao,
+(data_inicio + INTERVAL previsao DAY) AS data_entrega, # fazer o calculo em dias
+o.status
+ FROM obra o # id_projeto id_empreiteira id_colaborador
+ INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira #id_pessoa
+ INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa
