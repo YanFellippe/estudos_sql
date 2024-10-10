@@ -134,7 +134,7 @@ o.status
  INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira #id_pessoa
  INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa;
  
- 
+ -- consulta da empresa
  SELECT 
  p.nome_fantasia AS nome_empresa,
  ed.rua,
@@ -149,3 +149,21 @@ o.status
  INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira
  INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa
  INNER JOIN endereco ed ON ed.id_pessoa = p.id_pessoa;
+
+
+-- consulta dos projetos com a obra
+SELECT 
+pp.nome_projeto AS projeto_obra,
+p.nome AS responsavel_projeto,
+c.salario,
+c.matricula,
+pp.data_inicio AS inicio_projeto,
+pp.previsao,
+pp.data_fim AS final_projeto,
+pp.valor AS valor_projeto,
+pp.status AS status_projeto
+FROM obra o
+INNER JOIN projeto pp ON pp.id_projeto = o.id_projeto  
+INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira
+INNER JOIN pessoa p ON p.id_pessoa = ep.id_empreiteira
+INNER JOIN colaborador c ON c.id_pessoa = p.id_pessoa
