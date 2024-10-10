@@ -123,7 +123,6 @@ INSERT INTO obra(valor, data_inicio, previsao, data_fim, status, id_empreiteira,
 (3300000.00, '2024-11-01', '2028-12-09', NULL, 'A', 3, 3, 6);
 
 -- seção de select com inner join
-
 SELECT 
 p.nome,
 o.valor,
@@ -133,4 +132,20 @@ o.previsao,
 o.status
  FROM obra o # id_projeto id_empreiteira id_colaborador
  INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira #id_pessoa
+ INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa;
+ 
+ 
+ SELECT 
+ p.nome_fantasia AS nome_empresa,
+ ed.rua,
+ ed.cidade,
+ ed.uf AS UF,
+ p.telefone,
+ o.data_inicio,
+ o.previsao,
+ o.data_fim AS previsao_conclusao,
+ o.valor AS valor_total
+ FROM obra o
+ INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira
  INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa
+ INNER JOIN endereco ed ON ed.id_pessoa = p.id_pessoa;
