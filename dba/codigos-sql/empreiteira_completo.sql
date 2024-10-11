@@ -166,4 +166,25 @@ FROM obra o
 INNER JOIN projeto pp ON pp.id_projeto = o.id_projeto  
 INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira
 INNER JOIN pessoa p ON p.id_pessoa = ep.id_empreiteira
-INNER JOIN colaborador c ON c.id_pessoa = p.id_pessoa
+INNER JOIN colaborador c ON c.id_pessoa = p.id_pessoa;
+
+-- Relatório Projeto e Empreiteira
+CREATE VIEW relatorio_empreiteira AS
+   SELECT
+   pm.nome AS "Meste Obra",
+   pe.nome AS "Nome Empresa",  
+   p.nome  AS "Nome Arquiteto",
+   pj.nome_projeto,
+   pj.valor AS "Valor Projeto",
+   o.valor AS "Valor Obra",
+   o.data_inicio
+   FROM obra o
+   INNER JOIN projeto pj ON pj.id_projeto = o.id_projeto
+   INNER JOIN colaborador c ON c.id_colaborador = PJ.id_colaborador
+   INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
+   INNER JOIN empreiteira em ON em.id_empreiteira = o.id_empreiteira
+   INNER JOIN pessoa pe ON pe.id_pessoa = em.id_pessoa
+   INNER JOIN colaborador cn ON cn.id_colaborador = o.id_colaborador
+   INNER JOIN pessoa pm ON pm.id_pessoa = cn.id_pessoa;
+   
+   SELECT * FROM relatorio_empreiteira;
