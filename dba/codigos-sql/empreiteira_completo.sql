@@ -188,3 +188,30 @@ CREATE VIEW relatorio_empreiteira AS
    INNER JOIN pessoa pm ON pm.id_pessoa = cn.id_pessoa;
    
    SELECT * FROM relatorio_empreiteira;
+   
+-- select para endereco de empreiteira, mestre de obras e arquiteto  
+SELECT 
+en.rua AS rua_empreiteira,
+en.cep AS cep_empreiteira,
+en.cidade AS cidade_empreiteira,
+en.uf AS uf_empreiteira,
+e.rua AS rua_mestre_obra,
+e.cep AS cep_mestre_obra,
+e.cidade AS cidade_mestre_obra,
+e.uf AS uf_mestre_obra,
+ee.rua AS rua_arquiteto,
+ee.cep AS cep_arquiteto,
+ee.cidade AS cidade_arquiteto,
+ee.uf AS uf_arquiteto
+FROM obra o 
+INNER JOIN empreiteira ep ON ep.id_empreiteira = o.id_empreiteira
+INNER JOIN pessoa p ON p.id_pessoa = ep.id_pessoa
+INNER JOIN endereco en ON en.id_pessoa = p.id_pessoa
+INNER JOIN colaborador c ON c.id_colaborador = o.id_colaborador
+INNER JOIN pessoa pe ON pe.id_pessoa = c.id_pessoa
+INNER JOIN endereco e ON e.id_pessoa = pe.id_pessoa
+INNER JOIN projeto pj ON pj.id_projeto = o.id_projeto
+INNER JOIN colaborador cc ON cc.id_colaborador = pj.id_colaborador
+INNER JOIN pessoa pp ON pp.id_pessoa = cc.id_pessoa
+INNER JOIN endereco ee ON ee.id_pessoa = pp.id_pessoa;
+
