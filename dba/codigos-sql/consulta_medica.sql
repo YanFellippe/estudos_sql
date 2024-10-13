@@ -7,6 +7,7 @@ SELECT * FROM medico;
 SELECT * FROM consulta;
 
 -- DROP TABLE consulta; -> apaga a tabela desejada
+-- Consulta médica focada no auxílio de controle de pacientes e funcionários do hospital
 
 CREATE TABLE pessoa(
 id_pessoa INT PRIMARY KEY AUTO_INCREMENT, -- pk da tabela
