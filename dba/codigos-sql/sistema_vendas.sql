@@ -34,7 +34,7 @@ CREATE TABLE categoria (
 );
 
 CREATE TABLE produto (
-	id_produto INT AUTO_INCREMENT PRIMARY KEY,
+    id_produto INT AUTO_INCREMENT PRIMARY KEY,
     codigo INT(5),
     descricao VARCHAR(100) NOT NULL,
     preco DECIMAL(10, 2) NOT NULL,
@@ -52,7 +52,10 @@ CREATE TABLE venda (
     acrescimo DECIMAL(10, 2) DEFAULT 0.00,
     situacao ENUM('concluida', 'pendente', 'cancelada') DEFAULT 'pendente',
     id_cliente INT,
-    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente)
+    id_atendente INT,
+    numero_cupom INT,
+    FOREIGN KEY (id_cliente) REFERENCES cliente(id_cliente),
+    FOREIGN KEY (id_atendente) REFERENCES atendente(id_atendente)
 );
 
 CREATE TABLE itens_venda (
@@ -68,10 +71,8 @@ CREATE TABLE itens_venda (
     FOREIGN KEY (id_venda) REFERENCES venda(id_venda)
 );
 
--- Campo dos inserts 
-
-SELECT * FROM pessoa;
-INSERT INTO pessoa(nome, idade, cpf, situacao) VALUES
+-- Inserções
+INSERT INTO pessoa (nome, idade, cpf, situacao) VALUES
 ('Bora Bilson', 42, '12345678900', 'ativo'),
 ('Amostradinho da Silva', 26, '00298366118', 'ativo'),
 ('Inês Sistente', 52, '93877122300', 'ativo'),
@@ -79,14 +80,12 @@ INSERT INTO pessoa(nome, idade, cpf, situacao) VALUES
 ('Oreia Seca', 62, '12388900876', 'ativo'),
 ('Silas Cow', 19, '17389098177', 'ativo');
 
-SELECT * FROM atendente;
-INSERT INTO atendente(matricula, salario, situacao, id_pessoa) VALUES
+INSERT INTO atendente (matricula, salario, situacao, id_pessoa) VALUES
 ('A3782849012344456981', 2775.44, 'ativo', 1),
 ('A7986435653268386666', 2775.44, 'ativo', 2),
 ('A9872345821073892460', 2775.44, 'ativo', 3);
 
-SELECT * FROM cliente;
-INSERT INTO cliente(telefone, saldo, email, situacao, id_pessoa) VALUES
+INSERT INTO cliente (telefone, saldo, email, situacao, id_pessoa) VALUES
 ('61999885678', 19877.19, 'testandocoins@gmail.com', 'ativo', 4),
 ('61998765423', 22987.55, 'matanubi@gmail.com', 'ativo', 5),
 ('61898988534', 6789.99, 'quetirofoiesse@gmail.com', 'ativo', 6);
@@ -106,17 +105,29 @@ INSERT INTO produto(codigo, descricao, preco, situacao, quantidade_estoque, id_c
 (10293 , 'Geladeira Duplex - Eletrolux', 3299.99, 'disponivel', 19, 2),
 (76859 , 'Kit Talheres de ouro', 1255.25, 'disponivel', 333, 2);
 
+INSERT INTO venda (valor_bruto, desconto, acrescimo, valor_total, situacao, id_cliente, id_atendente, numero_cupom) VALUES
+(0, 0, 0, 0, 'pendente', 1, 1, 1),
+(0, 0, 0, 0, 'pendente', 2, 2, 2),
+(0, 0, 0, 0, 'pendente', 3, 3, 3);
+
+-- insert para calculo de itens_venda
+
 SELECT * FROM produto;
 
-INSERT INTO venda(total_bruto,desconto,acrescimo,valor_total,situacao,id_cliente,id_atendente,numero_cupom)
-VALUES(0,0,0,0,'P',1,1,1);
+INSERT INTO itens_venda (quantidade, preco, valor_bruto, desconto, acrescimo, valor_total, cancelado, id_produto, id_venda) VALUES
+(2, (SELECT preco FROM produto WHERE id_produto = 1), 2 * (SELECT preco FROM produto WHERE id_produto = 1), 10, 0, (2 * (SELECT preco FROM produto WHERE id_produto = 1)) - 10, FALSE, 1, 1),
+(1, (SELECT preco FROM produto WHERE id_produto = 2), 1 * (SELECT preco FROM produto WHERE id_produto = 2), 0, 0, (1 * (SELECT preco FROM produto WHERE id_produto = 2)), FALSE, 2, 1);
+    
+INSERT INTO itens_venda (quantidade, preco, valor_bruto, desconto, acrescimo, valor_total, cancelado, id_produto, id_venda) VALUES
+(3, (SELECT preco FROM produto WHERE id_produto = 3), 3 * (SELECT preco FROM produto WHERE id_produto = 3), 5, 0, (3 * (SELECT preco FROM produto WHERE id_produto = 3)) - 5, FALSE, 3, 2),
+(2, (SELECT preco FROM produto WHERE id_produto = 4), 2 * (SELECT preco FROM produto WHERE id_produto = 4), 0, 0, (2 * (SELECT preco FROM produto WHERE id_produto = 4)), FALSE, 4, 2);
 
-INSERT INTO item_venda(quantidade,preco,total_bruto,desconto,acrescimo,valor_total,cancelado,id_produto,id_venda)
-VALUES(5,(SELECT preco FROM produto WHERE id_produto = 4),quantidade*preco,5,0,total_bruto-desconto+acrescimo,'N',4,1);
+UPDATE venda 
+SET valor_bruto = (SELECT SUM(valor_total) FROM itens_venda WHERE id_venda = 1), 
+    valor_total = valor_bruto - desconto + acrescimo 
+WHERE id_venda = 1;
 
-UPDATE venda SET total_bruto =(SELECT SUM(valor_total) FROM item_venda WHERE cancelado = 'N' AND id_venda = 1),valor_total = (total_bruto-desconto+acrescimo) WHERE id_venda = 1;
-
-SELECT * FROM venda;
-SELECT * FROM item_venda;
-
-UPDATE item_venda SET cancelado = 'S' WHERE id_item_venda = 1 AND id_venda = 1;
+UPDATE venda 
+SET valor_bruto = (SELECT SUM(valor_total) FROM itens_venda WHERE id_venda = 2), 
+    valor_total = valor_bruto - desconto + acrescimo 
+WHERE id_venda = 2;
