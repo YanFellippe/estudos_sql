@@ -105,3 +105,18 @@ INSERT INTO produto(codigo, descricao, preco, situacao, quantidade_estoque, id_c
 (67890 , 'Multiprocessador - Tramontina', 199.99, 'disponivel', 22, 3),
 (10293 , 'Geladeira Duplex - Eletrolux', 3299.99, 'disponivel', 19, 2),
 (76859 , 'Kit Talheres de ouro', 1255.25, 'disponivel', 333, 2);
+
+SELECT * FROM produto;
+
+INSERT INTO venda(total_bruto,desconto,acrescimo,valor_total,situacao,id_cliente,id_atendente,numero_cupom)
+VALUES(0,0,0,0,'P',1,1,1);
+
+INSERT INTO item_venda(quantidade,preco,total_bruto,desconto,acrescimo,valor_total,cancelado,id_produto,id_venda)
+VALUES(5,(SELECT preco FROM produto WHERE id_produto = 4),quantidade*preco,5,0,total_bruto-desconto+acrescimo,'N',4,1);
+
+UPDATE venda SET total_bruto =(SELECT SUM(valor_total) FROM item_venda WHERE cancelado = 'N' AND id_venda = 1),valor_total = (total_bruto-desconto+acrescimo) WHERE id_venda = 1;
+
+SELECT * FROM venda;
+SELECT * FROM item_venda;
+
+UPDATE item_venda SET cancelado = 'S' WHERE id_item_venda = 1 AND id_venda = 1;
