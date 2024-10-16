@@ -149,4 +149,3 @@ INNER JOIN cliente c ON c.id_cliente = v.id_cliente
 INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
 INNER JOIN atendente a ON a.id_atendente = v.id_atendente
 INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa
-INNER JOIN atendente aa ON aa.id_pessoa = pp.id_pessoa
