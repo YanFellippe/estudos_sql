@@ -67,6 +67,8 @@ CREATE TABLE itens_venda (
     valor_bruto DECIMAL(10, 2) NOT NULL,
     valor_total DECIMAL(10, 2) NOT NULL,
     cancelado BOOLEAN DEFAULT FALSE,
+    id_produto INT NOT NULL,
+    FOREIGN KEY (id_produto) REFERENCES produto(id_produto),
     id_venda INT NOT NULL,
     FOREIGN KEY (id_venda) REFERENCES venda(id_venda)
 );
@@ -113,6 +115,7 @@ INSERT INTO venda (valor_bruto, desconto, acrescimo, valor_total, situacao, id_c
 -- insert para calculo de itens_venda
 
 SELECT * FROM produto;
+SELECT * FROM itens_venda;
 
 INSERT INTO itens_venda (quantidade, preco, valor_bruto, desconto, acrescimo, valor_total, cancelado, id_produto, id_venda) VALUES
 (2, (SELECT preco FROM produto WHERE id_produto = 1), 2 * (SELECT preco FROM produto WHERE id_produto = 1), 10, 0, (2 * (SELECT preco FROM produto WHERE id_produto = 1)) - 10, FALSE, 1, 1),
@@ -131,3 +134,5 @@ UPDATE venda
 SET valor_bruto = (SELECT SUM(valor_total) FROM itens_venda WHERE id_venda = 2), 
     valor_total = valor_bruto - desconto + acrescimo 
 WHERE id_venda = 2;
+
+SELECT * FROM venda;
