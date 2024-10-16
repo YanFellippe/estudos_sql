@@ -148,4 +148,26 @@ INNER JOIN venda v ON v.id_venda = iv.id_venda
 INNER JOIN cliente c ON c.id_cliente = v.id_cliente
 INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
 INNER JOIN atendente a ON a.id_atendente = v.id_atendente
-INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa
+INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa;
+
+-- Relatório itens venda
+SELECT 
+pr.descricao AS 'nome_produto',
+pr.preco AS 'preco_produto',
+c.descricao,
+iv.quantidade AS 'quantidade_compra',
+iv.valor_bruto,
+iv.desconto,
+iv.acrescimo,
+iv.valor_total AS 'total_compra',
+iv.cancelado,
+p.nome AS 'nome_cliente',
+pp.nome AS 'nome_atendente'
+FROM itens_venda iv
+INNER JOIN produto pr ON pr.id_produto = iv.id_produto
+INNER JOIN categoria c ON c.id_categoria = pr.id_categoria
+INNER JOIN venda v ON v.id_venda = iv.id_venda
+INNER JOIN cliente cc ON cc.id_cliente = v.id_cliente
+INNER JOIN pessoa p ON p.id_pessoa = cc.id_pessoa
+INNER JOIN atendente a ON a.id_atendente = v.id_atendente
+INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa;
