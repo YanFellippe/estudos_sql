@@ -171,3 +171,14 @@ INNER JOIN cliente cc ON cc.id_cliente = v.id_cliente
 INNER JOIN pessoa p ON p.id_pessoa = cc.id_pessoa
 INNER JOIN atendente a ON a.id_atendente = v.id_atendente
 INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa;
+
+-- Recalcular estoque
+UPDATE itens_venda SET cancelado = 1 WHERE id_item = 2; 
+UPDATE produto SET quantidade_estoque = 200 WHERE quantidade_estoque IS NULL;
+SELECT * FROM produto;
+
+UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade) FROM itens_venda WHERE id_produto = 1 AND cancelado = 0) WHERE id_produto = 1;
+UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade) FROM itens_venda WHERE id_produto = 2 AND cancelado = 0) WHERE id_produto = 2;
+
+UPDATE produto SET quantidade_estoque = quantidade_estoque + (SELECT(quantidade) FROM itens_venda WHERE id_produto = 1 AND cancelado = 1) WHERE id_produto = 1;
+UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade) FROM itens_venda WHERE id_produto = 2 AND cancelado = 1) WHERE id_produto = 2;
