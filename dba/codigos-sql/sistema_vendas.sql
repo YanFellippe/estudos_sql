@@ -136,3 +136,17 @@ SET valor_bruto = (SELECT SUM(valor_total) FROM itens_venda WHERE id_venda = 2),
 WHERE id_venda = 2;
 
 SELECT * FROM venda;
+
+-- Relatório de vendas
+SELECT 
+v.numero_cupom AS cupom_compra,
+p.nome AS nome_cliente,
+pp.nome AS nome_atendente,
+v.valor_total
+FROM itens_venda iv
+INNER JOIN venda v ON v.id_venda = iv.id_venda
+INNER JOIN cliente c ON c.id_cliente = v.id_cliente
+INNER JOIN pessoa p ON p.id_pessoa = c.id_pessoa
+INNER JOIN atendente a ON a.id_atendente = v.id_atendente
+INNER JOIN pessoa pp ON pp.id_pessoa = a.id_pessoa
+INNER JOIN atendente aa ON aa.id_pessoa = pp.id_pessoa
