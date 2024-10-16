@@ -139,10 +139,10 @@ SELECT * FROM venda;
 
 -- Relatório de vendas
 SELECT 
-v.numero_cupom AS cupom_compra,
-p.nome AS nome_cliente,
-pp.nome AS nome_atendente,
-v.valor_total
+v.numero_cupom AS 'cupom_compra',
+p.nome AS 'nome_cliente',
+pp.nome AS 'nome_atendente',
+v.valor_total 
 FROM itens_venda iv
 INNER JOIN venda v ON v.id_venda = iv.id_venda
 INNER JOIN cliente c ON c.id_cliente = v.id_cliente
