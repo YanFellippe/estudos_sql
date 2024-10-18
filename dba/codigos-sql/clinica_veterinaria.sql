@@ -142,3 +142,39 @@ VALUES
 ('Recomendada nova consulta devido à persistência da dermatite.', 2),
 ('Cirurgia de castração realizada com sucesso, recuperação sem complicações.', 3),
 ('Objeto estranho removido sem danos internos; animal estável.', 4);
+
+-- Relatório Clinica Veterinária
+SELECT 
+p.nome AS 'nome_tutor',
+pp.nome AS 'nome_veterinario',
+an.nome AS 'nome_animal',
+an.peso,
+an.raca,
+an.idade AS 'idade_animal',
+co.data_consulta,
+rm.medicamento
+FROM consulta co
+INNER JOIN animal an ON an.id_animal = co.id_animal
+INNER JOIN tutor t ON t.id_tutor = an.id_tutor
+INNER JOIN pessoa p ON p.id_pessoa = t.id_pessoa
+INNER JOIN veterinario v ON v.id_veterinario = co.id_veterinario
+INNER JOIN pessoa pp ON pp.id_pessoa = v.id_pessoa
+INNER JOIN receita_medica rm ON rm.id_consulta = co.id_consulta;
+
+-- Relatório Histórico Medico 
+SELECT 
+hm.observacao AS 'obs_historico',
+p.nome AS 'nome_tutor',
+an.nome AS 'nome_animal',
+co.observacao AS 'obs_consulta',
+rm.medicamento AS 'nome_medicamento',
+rm.observacao AS 'obs_medicamento',
+rm.data_inicio,
+rm.data_fim,
+rm.dias AS 'prazo'
+FROM consulta co
+INNER JOIN historico_medico hm ON hm.id_consulta = co.id_consulta
+INNER JOIN animal an ON an.id_animal = co.id_animal
+INNER JOIN receita_medica rm ON rm.id_consulta = co.id_consulta
+INNER JOIN tutor t ON t.id_tutor = an.id_tutor
+INNER JOIN pessoa p ON p.id_pessoa = t.id_pessoa
