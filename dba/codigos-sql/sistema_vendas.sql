@@ -186,12 +186,36 @@ UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade)
 
 -- alterar tabela com triggers
 CREATE TABLE alteracao_preco(
-id_alteracao_preco INT PRIMARY KEY AUTO_INCREMENT,
-preco_novo DECIMAL(10,2),
-preco_antigo DECIMAL(10,2),
-id_produto INT NOT NULL,
-FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+	id_alteracao_preco INT PRIMARY KEY AUTO_INCREMENT,
+	preco_novo DECIMAL(10,2),
+	preco_antigo DECIMAL(10,2),
+	id_produto INT NOT NULL,
+	FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
 );
+
+SELECT * FROM alteracao_preco;
+SELECT * FROM produto;
+
+UPDATE produto SET preco = 11001.50 WHERE id_produto = 1;
+
+SELECT * FROM itens_venda;
+
+CREATE TABLE alteracao_itens_venda (
+    id_alteracao INT AUTO_INCREMENT PRIMARY KEY,
+    id_venda INT NOT NULL,
+    id_produto INT NOT NULL,
+    quantidade INT NOT NULL,
+    preco DECIMAL(10, 2) NOT NULL,
+    valor_bruto DECIMAL(10, 2) NOT NULL,
+    valor_total DECIMAL(10, 2) NOT NULL,
+    desconto DECIMAL(10, 2) DEFAULT 0,
+    acrescimo DECIMAL(10, 2) DEFAULT 0,
+    cancelado CHAR(1) DEFAULT 'N',
+    data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    tipo_operacao ENUM('INSERCAO', 'ATUALIZACAO')
+);
+
+UPDATE 
 
 DELIMITER //
 CREATE TRIGGER historico_preco
@@ -202,10 +226,73 @@ IF(OLD.preco <> NEW.preco) THEN
 INSERT INTO alteracao_preco(preco_novo, preco_antigo, id_produto) VALUES
 (NEW.preco, OLD.preco, NEW.id_produto);
 END IF;
-END 
+END //
+
+DELIMITER //
+CREATE TRIGGER set_preco
+BEFORE INSERT
+ON itens_venda FOR EACH ROW
+SET New.preco = (SELECT preco FROM produto WHERE id_produto = NEW.id_produto);
+END
 //
 
-SELECT * FROM alteracao_preco;
-SELECT * FROM produto;
+DELIMITER //
+CREATE TRIGGER update_itens_venda
+BEFORE INSERT
+ON itens_venda FOR EACH ROW
+SET NEW.valor_bruto = (New.quantidade*New.preco),NEW.valor_total = (New.valor_bruto-
+New.desconto+New.acrescimo);
+END
+//
 
-UPDATE produto SET preco = 11001.50 WHERE id_produto = 1;
+DELIMITER //
+CREATE TRIGGER recalculo_venda
+BEFORE INSERT
+ON itens_venda FOR EACH ROW
+UPDATE venda SET valor_bruto = (SELECT SUM(valor_total) FROM itens_venda WHERE New.
+id_venda = New.id_venda AND cancelado = 'N'), valor_total = (valor_bruto-desconto+
+acrescimo) WHERE id_venda = NEW.id_venda;
+END
+//
+
+DELIMITER //
+CREATE TRIGGER after_insert_itens_venda
+AFTER INSERT ON itens_venda
+FOR EACH ROW
+BEGIN
+    INSERT INTO alteracao_itens_venda (
+        id_venda, id_produto, quantidade, preco, valor_bruto, valor_total, desconto, acrescimo, cancelado, tipo_operacao
+    ) VALUES (
+        NEW.id_venda, 
+        NEW.id_produto, 
+        NEW.quantidade, 
+        NEW.preco, 
+        NEW.valor_bruto, 
+        NEW.valor_total, 
+        NEW.desconto, 
+        NEW.acrescimo, 
+        NEW.cancelado, 
+        'INSERCAO'
+    );
+END //
+
+DELIMITER //
+CREATE TRIGGER after_update_itens_venda
+AFTER UPDATE ON itens_venda
+FOR EACH ROW
+BEGIN
+    INSERT INTO alteracao_itens_venda (
+        id_venda, id_produto, quantidade, preco, valor_bruto, valor_total, desconto, acrescimo, cancelado, tipo_operacao
+    ) VALUES (
+        NEW.id_venda, 
+        NEW.id_produto, 
+        NEW.quantidade, 
+        NEW.preco, 
+        NEW.valor_bruto, 
+        NEW.valor_total, 
+        NEW.desconto, 
+        NEW.acrescimo, 
+        NEW.cancelado, 
+        'ATUALIZACAO'
+    );
+END //
