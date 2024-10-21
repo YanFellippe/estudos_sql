@@ -182,3 +182,30 @@ UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade)
 
 UPDATE produto SET quantidade_estoque = quantidade_estoque + (SELECT(quantidade) FROM itens_venda WHERE id_produto = 1 AND cancelado = 1) WHERE id_produto = 1;
 UPDATE produto SET quantidade_estoque = quantidade_estoque - (SELECT(quantidade) FROM itens_venda WHERE id_produto = 2 AND cancelado = 1) WHERE id_produto = 2;
+
+
+-- alterar tabela com triggers
+CREATE TABLE alteracao_preco(
+id_alteracao_preco INT PRIMARY KEY AUTO_INCREMENT,
+preco_novo DECIMAL(10,2),
+preco_antigo DECIMAL(10,2),
+id_produto INT NOT NULL,
+FOREIGN KEY (id_produto) REFERENCES produto(id_produto)
+);
+
+DELIMITER //
+CREATE TRIGGER historico_preco
+AFTER UPDATE
+ON produto FOR EACH ROW
+BEGIN 
+IF(OLD.preco <> NEW.preco) THEN
+INSERT INTO alteracao_preco(preco_novo, preco_antigo, id_produto) VALUES
+(NEW.preco, OLD.preco, NEW.id_produto);
+END IF;
+END 
+//
+
+SELECT * FROM alteracao_preco;
+SELECT * FROM produto;
+
+UPDATE produto SET preco = 11001.50 WHERE id_produto = 1;
