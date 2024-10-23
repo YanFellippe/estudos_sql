@@ -142,3 +142,33 @@ BEGIN
         WHERE id_venda = NEW.id_venda;
     END IF;
 END //
+
+-- Crie uma Trigger de Auditoria
+SELECT * FROM auditoria;
+CREATE TABLE auditoria(
+id_registro_pessoa INT PRIMARY KEY AUTO_INCREMENT,
+nome VARCHAR(45), 
+cpf VARCHAR(11)
+);
+
+DELIMITER //
+CREATE TRIGGER auditoria_pessoa
+BEFORE DELETE ON pessoa FOR EACH ROW
+BEGIN
+	INSERT INTO auditoria(nome, cpf) VALUES
+    (OLD.nome, OLD.cpf);
+END//
+
+DELIMITER //
+CREATE TRIGGER after_update_auditoria
+AFTER INSERT ON pessoa FOR EACH ROW
+BEGIN
+	INSERT INTO auditoria(nome, cpf) VALUES
+    (NEW.nome, NEW.cpf);
+END//
+
+SELECT * FROM pessoa;
+INSERT INTO pessoa(nome, idade, cpf, situacao) VALUES
+('Cabeleileira Leila', 36, '12093866709', 'ativo');
+
+DELETE FROM pessoa WHERE id_pessoa = 7;
