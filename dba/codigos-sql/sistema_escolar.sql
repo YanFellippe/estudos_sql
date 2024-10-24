@@ -62,11 +62,19 @@ VALUES
 ('Adriano','989715641',36,'A'),
 ('Paulo Sergio','15415645',null,'A');
 
+INSERT INTO pessoa(nome,cpf,idade,situacao) VALUES
+('Amostradinho da Silva', '19283746009', 19, 'A'),
+('Bora Bilson', '73849912901', 18, 'A');
+
 SELECT * FROM aluno;
 INSERT INTO aluno(matricula,id_pessoa,situacao)# Inserindo os dados de aluno
 VALUES 
 ('BT81818',1,'A'),
 ('BY96662',4,'A');
+
+INSERT INTO aluno(matricula,id_pessoa,situacao) VALUES
+('BG81001', 9, 'A'),
+('BV98703', 10, 'A');
 
 SELECT * FROM professor;
 INSERT INTO professor(matricula,salario,situacao,id_pessoa)# Inserindo os dados de professor 
@@ -103,4 +111,43 @@ c.descricao AS nome_curso,
 t.numero_sala AS turmas_atual
 FROM turma t #id_aluno id_curso_id_professor
 INNER JOIN pessoa p ON p.id_pessoa = t.id_aluno
-INNER JOIN curso c ON c.id_curso = t.id_curso
+INNER JOIN curso c ON c.id_curso = t.id_curso;
+
+-- Criar a tabela de avaliação
+CREATE TABLE avaliacao (
+    id_avaliacao INT PRIMARY KEY AUTO_INCREMENT,
+    nota_1 DECIMAL(5,2) NOT NULL,
+    nota_2 DECIMAL(5,2) NOT NULL,
+    nota_3 DECIMAL(5,2) NOT NULL,
+    nota_4 DECIMAL(5,2) NOT NULL,
+    id_aluno INT NOT NULL,
+    FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+    resultado ENUM('A', 'R') DEFAULT 'R',
+    v_media DECIMAL(4,2)
+);
+
+SELECT * FROM avaliacao;
+INSERT INTO avaliacao(nota_1, nota_2, nota_3, nota_4, id_aluno) VALUES
+(7.7, 8.75, 9.15, 8.16, 1),
+(7, 8, 9, 8, 2),
+(5.5, 7.75, 8.15, 7.16, 3),
+(9.7, 8.75, 9, 10, 4);
+
+-- Criar TRIGGER Média
+
+DELIMITER //
+CREATE TRIGGER avaliacao_resultado
+BEFORE INSERT ON avaliacao
+FOR EACH ROW
+BEGIN
+    DECLARE v_calculado DECIMAL(4,2);
+    SET v_calculado = (NEW.nota_1 + NEW.nota_2 + NEW.nota_3 + NEW.nota_4) / 4;
+    SET NEW.v_media = v_calculado;
+    
+    IF v_calculado >= 5 THEN
+        SET NEW.resultado = 'A';
+    ELSE
+        SET NEW.resultado = 'R';
+    END IF;
+END//
+DELIMITER ;
