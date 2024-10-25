@@ -198,7 +198,7 @@ SELECT * FROM produto;
 
 UPDATE produto SET preco = 11001.50 WHERE id_produto = 1;
 
-SELECT * FROM itens_venda;
+SELECT * FROM itens_venda;         
 
 CREATE TABLE alteracao_itens_venda (
     id_alteracao INT AUTO_INCREMENT PRIMARY KEY,
@@ -214,3 +214,16 @@ CREATE TABLE alteracao_itens_venda (
     data_alteracao TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     tipo_operacao ENUM('INSERCAO', 'ATUALIZACAO')
 );
+
+USE sistema_venda;
+-- Relatório de Vendas Canceladas
+SELECT
+p.nome AS 'nome_atendente',
+pr.descricao AS 'nome_produto',
+iv.valor_total,
+iv.cancelado AS 'compra_cancelada'
+FROM itens_venda iv
+INNER JOIN venda v ON v.id_venda = iv.id_venda
+INNER JOIN atendente aa ON aa.id_atendente = v.id_atendente
+INNER JOIN pessoa p ON p.id_pessoa = aa.id_pessoa
+INNER JOIN produto pr ON pr.id_produto = iv.id_produto
