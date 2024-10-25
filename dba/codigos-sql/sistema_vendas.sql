@@ -226,4 +226,18 @@ FROM itens_venda iv
 INNER JOIN venda v ON v.id_venda = iv.id_venda
 INNER JOIN atendente aa ON aa.id_atendente = v.id_atendente
 INNER JOIN pessoa p ON p.id_pessoa = aa.id_pessoa
+INNER JOIN produto pr ON pr.id_produto = iv.id_produto;
+
+-- Criar um relatório Rank Atendente
+SELECT
+p.nome AS 'nome_atendente',
+pr.descricao AS 'nome_produto',
+iv.cancelado AS 'compra_cancelada',
+iv.valor_total 
+FROM itens_venda iv
+INNER JOIN venda v ON v.id_venda = iv.id_venda
+INNER JOIN atendente aa ON aa.id_atendente = v.id_atendente
+INNER JOIN pessoa p ON p.id_pessoa = aa.id_pessoa
 INNER JOIN produto pr ON pr.id_produto = iv.id_produto
+WHERE iv.cancelado = 0
+ORDER BY iv.valor_total DESC;
