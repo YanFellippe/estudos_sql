@@ -1,58 +1,64 @@
 CREATE DATABASE sistema_escola;-- Cria o banco de dados
 USE sistema_escola; # Utiliza o banco de dados
 CREATE TABLE pessoa(
-id_pessoa INT PRIMARY KEY AUTO_INCREMENT,
-nome VARCHAR(45) NOT NULL,
-cpf VARCHAR(11) NOT NULL,
-idade INT,
-situacao CHAR(1));
+	id_pessoa INT PRIMARY KEY AUTO_INCREMENT,
+	nome VARCHAR(45) NOT NULL,
+	cpf VARCHAR(11) NOT NULL,
+	idade INT,
+	situacao CHAR(1)
+);
 
 CREATE TABLE aluno(
-id_aluno INT PRIMARY KEY AUTO_INCREMENT,
-matricula VARCHAR(20) NOT NULL,
-id_pessoa INT NOT NULL,
-situacao CHAR(1),
-FOREIGN KEY(id_pessoa) REFERENCES pessoa(id_pessoa)); #Pegando a chave primaria de outra tabela que vira a chave estrangeira
+	id_aluno INT PRIMARY KEY AUTO_INCREMENT,
+	matricula VARCHAR(20) NOT NULL,
+	id_pessoa INT NOT NULL,
+	situacao CHAR(1),
+	FOREIGN KEY(id_pessoa) REFERENCES pessoa(id_pessoa)
+); #Pegando a chave primaria de outra tabela que vira a chave estrangeira
 
 CREATE TABLE professor(
-id_professor INT PRIMARY KEY AUTO_INCREMENT,
-matricula VARCHAR(20) NOT NULL,
-salario DECIMAL(10,2),
-situacao CHAR(1) NOT NULL,
-id_pessoa INT NOT NULL,
-FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa));
+	id_professor INT PRIMARY KEY AUTO_INCREMENT,
+	matricula VARCHAR(20) NOT NULL,
+	salario DECIMAL(10,2),
+	situacao CHAR(1) NOT NULL,
+	id_pessoa INT NOT NULL,
+	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
+);
 
 CREATE TABLE endereco(
-id_endereco INT PRIMARY KEY AUTO_INCREMENT,
-cidade VARCHAR(45) NOT NULL,
-rua VARCHAR(45) NOT NULL,
-bairro VARCHAR(45)NOT NULL,
-uf CHAR(2) NOT NULL,
-cep VARCHAR(8) NOT NULL,
-id_pessoa INT NOT NULL,
-FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa));
+	id_endereco INT PRIMARY KEY AUTO_INCREMENT,
+	cidade VARCHAR(45) NOT NULL,
+	rua VARCHAR(45) NOT NULL,
+	bairro VARCHAR(45)NOT NULL,
+	uf CHAR(2) NOT NULL,
+	cep VARCHAR(8) NOT NULL,
+	id_pessoa INT NOT NULL,
+	FOREIGN KEY (id_pessoa) REFERENCES pessoa(id_pessoa)
+);
 
 CREATE TABLE curso(
-id_curso INT PRIMARY KEY AUTO_INCREMENT,
-descricao VARCHAR(45)NOT NULL,
-carga_horaria INT NOT NULL,
-data_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
-data_fim DATETIME,
-semestre VARCHAR(20) NOT NULL,
-situacao CHAR(1));
+	id_curso INT PRIMARY KEY AUTO_INCREMENT,
+	descricao VARCHAR(45)NOT NULL,
+	carga_horaria INT NOT NULL,
+	data_inicio DATETIME DEFAULT CURRENT_TIMESTAMP,
+	data_fim DATETIME,
+	semestre VARCHAR(20) NOT NULL,
+	situacao CHAR(1)
+);
 
 CREATE TABLE turma(
-id_turma INT PRIMARY KEY AUTO_INCREMENT,
-numero_sala VARCHAR(10) NOT NULL,
-capacidade INT NOT NULL,
-situacao CHAR(1) NOT NULL,
-turno VARCHAR(20) NOT NULL,
-id_aluno INT NOT NULL,
-id_professor INT NOT NULL,
-id_curso INT NOT NULL,
-FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
-FOREIGN KEY (id_professor) REFERENCES professor(id_professor),
-FOREIGN KEY (id_curso) REFERENCES curso(id_curso));
+	id_turma INT PRIMARY KEY AUTO_INCREMENT,
+	numero_sala VARCHAR(10) NOT NULL,
+	capacidade INT NOT NULL,
+	situacao CHAR(1) NOT NULL,
+	turno VARCHAR(20) NOT NULL,
+	id_aluno INT NOT NULL,
+	id_professor INT NOT NULL,
+	id_curso INT NOT NULL,
+	FOREIGN KEY (id_aluno) REFERENCES aluno(id_aluno),
+	FOREIGN KEY (id_professor) REFERENCES professor(id_professor),
+	FOREIGN KEY (id_curso) REFERENCES curso(id_curso)
+);
 
 SELECT * FROM pessoa;
 INSERT INTO pessoa(nome,cpf,idade,situacao) # Inserindo os dados de pessoa
@@ -151,3 +157,20 @@ BEGIN
     END IF;
 END//
 DELIMITER ;
+
+select * from aluno;
+select* from pessoa;
+
+-- Criar Relatório Aluno
+SELECT 
+p.nome AS 'nome_aluno',
+av.nota_1,
+av.nota_2,
+av.nota_3,
+av.nota_4,
+av.v_media AS 'media_total',
+av.resultado
+FROM turma tr
+INNER JOIN aluno a ON a.id_aluno = tr.id_aluno
+INNER JOIN pessoa p ON p.id_pessoa = a.id_pessoa
+INNER JOIN avaliacao av ON av.id_aluno = a.id_aluno;
